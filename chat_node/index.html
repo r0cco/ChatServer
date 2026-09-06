@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Erlang Distributed Chat Test</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 30px auto; padding: 0 15px; }
+    #chat-box { height: 300px; border: 1px solid #ccc; padding: 10px; overflow-y: scroll; margin-bottom: 10px; background: #f9f9f9; }
+    .status { font-weight: bold; margin-bottom: 10px; }
+    .connected { color: green; }
+    .disconnected { color: red; }
+    .controls { display: flex; gap: 10px; margin-bottom: 15px; }
+    input[type="text"] { flex: 1; padding: 8px; }
+    button { padding: 8px 15px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h2>Erlang Distributed Chat</h2>
+  
+  <div class="controls">
+    <label for="server-select">Target Node:</label>
+    <select id="server-select">
+      <option value="ws://localhost:8080/ws">Node A (Port 8080)</option>
+      <option value="ws://localhost:8081/ws">Node B (Port 8081)</option>
+    </select>
+    <button id="connect-btn" onclick="toggleConnect()">Connect</button>
+  </div>
+
+  <div class="status">Status: <span id="status-text" class="disconnected">Disconnected</span></div>
+
+  <div id="chat-box"></div>
+
+  <div class="controls">
+    <input type="text" id="message-input" placeholder="Type a message..." disabled onkeypress="handleKeyPress(event)">
+    <button id="send-btn" onclick="sendMessage()" disabled>Send</button>
+  </div>
+
+  <script>
+    let socket = null;
+
+    function toggleConnect() {
+      if (socket) {
+        socket.close();
+        return;
+      }
+
+      const url = document.getElementById('server-select').value;
+      socket = new WebSocket(url);
+
+      socket.onopen = () => {
+        updateStatus(true);
+        appendMessage('--- Connected to ' + url + ' ---');
+      };
+
+      socket.onmessage = (event) => {
+        appendMessage(event.data);
+      };
+
+      socket.onclose = () => {
+        updateStatus(false);
+        appendMessage('--- Disconnected ---');
+        socket = null;
+      };
+
+      socket.onerror = (err) => {
+        console.error('WebSocket Error:', err);
+      };
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('message-input');
+      const text = input.value.trim();
+      if (text && socket) {
+        socket.send(text);
+        input.value = '';
+      }
+    }
+
+    function handleKeyPress(event) {
+      if (event.key === 'Enter') sendMessage();
+    }
+
+    function appendMessage(msg) {
+      const box = document.getElementById('chat-box');
+      const item = document.createElement('div');
+      item.textContent = msg;
+      box.appendChild(item);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function updateStatus(isConnected) {
+      const statusText = document.getElementById('status-text');
+      const connectBtn = document.getElementById('connect-btn');
+      const msgInput = document.getElementById('message-input');
+      const sendBtn = document.getElementById('send-btn');
+
+      if (isConnected) {
+        statusText.textContent = 'Connected';
+        statusText.className = 'connected';
+        connectBtn.textContent = 'Disconnect';
+        msgInput.disabled = false;
+        sendBtn.disabled = false;
+      } else {
+        statusText.textContent = 'Disconnected';
+        statusText.className = 'disconnected';
+        connectBtn.textContent = 'Connect';
+        msgInput.disabled = true;
+        sendBtn.disabled = true;
+      }
+    }
+  </script>
+</body>
+</html>
