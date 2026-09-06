@@ -1,0 +1,6 @@
+-sname chat_node
+
+-setcookie chat_node_cookie
+
++K true
++A30
