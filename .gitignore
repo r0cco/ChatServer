@@ -1,0 +1,59 @@
+# ==========================================
+# Erlang & Rebar3 Build Artifacts
+# ==========================================
+# Downloaded dependencies, compiled beams, and releases
+_build/
+_checkouts/
+
+# Rebar3 lock file (Optional: KEEP tracked for reproducible builds)
+# rebar.lock
+
+# Crash dumps and logs from the Erlang VM
+erl_crash.dump
+*.dump
+*.log
+
+# Mnesia database files (if used later for chat persistence)
+Mnesia.*/
+mnesia/
+
+# ==========================================
+# Windows & OS System Files
+# ==========================================
+# Windows Explorer metadata
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS Finder metadata (if collaborators use Mac)
+.DS_Store
+._*
+
+# ==========================================
+# Editor & IDE Directories
+# ==========================================
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# JetBrains / IntelliJ / Erlang plugin
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Emacs & Vim swap files
+*~
+*.swp
+*.swo
+
+# ==========================================
+# Environment & Local Overrides
+# ==========================================
+# Local config or environment variable overrides
+*.env
+*.local.config
